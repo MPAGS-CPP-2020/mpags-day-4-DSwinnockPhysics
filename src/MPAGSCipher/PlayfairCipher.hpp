@@ -3,6 +3,8 @@
 
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <map>
 
 #include "CipherMode.hpp"
 
@@ -53,6 +55,12 @@ class PlayfairCipher {
 
     /// The cipher key
     std::string key_ = "";
+
+    /// Map from coordinates to string
+    std::map<std::pair<int,int>, char> coordsToString_;
+
+    /// Map from string to coordinates
+    std::map<char, std::pair<int,int>> stringToCoords_;
 };
 
 

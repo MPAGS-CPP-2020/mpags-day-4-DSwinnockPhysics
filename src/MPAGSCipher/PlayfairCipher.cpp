@@ -85,28 +85,70 @@ std::string PlayfairCipher::setKey( const std::string& key ) {
     }*/
 
     // Store the playfair cipher key map
+    stringToCoords_ = stringtocoords;
+    coordsToString_ = coordstostring;
+
     return key_;
 }
 
 std::string PlayfairCipher::applyCipher( const std::string& inputText, const CipherMode cipherMode ) const
 {
+    // Copy the input text so it can be changed
+    std::string cipherText{inputText};
+
     // Change J -> I
+    std::transform( cipherText.begin(), cipherText.end(), cipherText.begin(), [] (char& c) { if ( c == 'J' ) { return 'I'; } else { return c; }; } );
 
     // If repeated chars in a digraph add an X or Q if XX
+    // Loop over every other input character
+    std::cout << cipherText << std::endl;
 
-    // If the size of the input is odd, add a trailing Z
+    for (size_t i{0}; i < cipherText.size(); i+=2) {
+        //If the next letter is the same as the current letter insert a Q after it if it's an X, otherwise add an X
+        if (cipherText[i] == cipherText[i+1]) {
+            if (cipherText[i] == 'X') {
+                cipherText.insert(i+1,1,'Q');
+            }
+            else {
+                cipherText.insert(i+1,1,'X');
+            }
+        }
+    }
+
+    // If the size of the input is odd, add a trailing Z unless the last letter is a Z, in which case add an X
+    if ( (cipherText.size() % 2) == 1 ) {
+        if ( *cipherText.end() == 'Z' ) {
+            cipherText.append("X");
+        }
+        else {
+            cipherText.append("Z");
+        }
+    }
+
+    std::cout << cipherText << std::endl;
 
     // Loop over the input in Digraphs
+    for ( size_t i{0}; i < cipherText.size(); i += 2) {
 
     //      - Find the coords in the grid for each digraph
+        auto firstCoord {stringToCoords_.find(cipherText[i])};
+        auto secondCoord {stringToCoords_.find(cipherText[i+1])};
+
+        // Make sure the coordinates are actually found in the key
+        if ( firstCoord==stringToCoords_.end() || secondCoord==stringToCoords_.end() ) {
+            std::cerr << "Error: Letter doesn't have corresponding coordinate." << std::endl;
+        }
 
     //      - Apply the rules to these coords to get 'new' coords
+        
     
     //      - Find the letter associated with the new coords
+    }
 
     // return the text
 
-    if (cipherMode==cipherMode){}
+    if (cipherMode==CipherMode::Decrypt){
     std::cout << "Doesn't do anything yet." << std::endl;
+    }
     return inputText;
 }
